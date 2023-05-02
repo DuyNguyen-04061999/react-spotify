@@ -76,7 +76,7 @@ const cache = {
 const _asyncFunction: { [key: string]: Promise<any> | any } = {};
 
 type UseQueryType<Data> = {
-  queryFn: ({signal, params}: {signal: AbortSignal, params: any[]}) => Promise<Data>;
+  queryFn: ({signal, params}: {signal?: AbortSignal, params?: any[]}) => Promise<Data>;
   queryKey: string | string[];
   cacheTime: number;
   dependencyList: any[];
