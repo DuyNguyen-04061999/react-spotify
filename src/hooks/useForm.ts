@@ -42,7 +42,9 @@ export const useForm = <K extends keyof Form>(
 
           //tạo error mới
           errObj[name] = validate({ [name]: rules[name] }, _form)[name];
-          setErrors((errors) => ({ ...errors, [name]: errObj[name] })); //validate trong lúc nhập data
+          // Sử dụng 1 trong 2
+          // ====== 1)validate trong lúc nhập data ======
+          setErrors((errors) => ({ ...errors, [name]: errObj[name] }));
           if (
             typeof _form[name] === "string" &&
             !_form[name].toString().trim()
@@ -50,7 +52,9 @@ export const useForm = <K extends keyof Form>(
             setErrors((error) => ({ ...error, [name]: "" }));
           } // khi xóa thì tắt validate
 
+          // ====== 2) mất lỗi khi nhập ======
           // setErrors((error) => ({ ...error, [name]: "" })); //mất error khi nhập
+
           // ===== validate field phụ thuộc =====
           if (
             Array.isArray(dependencies[name]) &&
