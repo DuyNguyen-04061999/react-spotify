@@ -1,16 +1,21 @@
 import { Rules, validate } from "@/utils";
 import { useEffect, useRef, useState } from "react";
 
-interface InitialDependency<Key> {
-  initialValue: { [key: string]: any };
-  dependencies: { [key: string]: Key[] };
+type MyKeys = keyof Rules;
+interface InitialDependency<Key extends MyKeys> {
+  initialValue: { [key: MyKeys]: any };
+  dependencies: { [key: MyKeys]: Key[] };
 }
 
 interface Form {
-  [key: string]: any;
+  [key: MyKeys]: any;
 }
 
-export const useForm = <K extends keyof Form>(
+interface Errors {
+  [key: MyKeys]: string;
+}
+
+export const useForm = <K extends MyKeys>(
   rules: Rules,
   { initialValue = {}, dependencies = {} }: InitialDependency<K>
 ) => {
@@ -18,7 +23,7 @@ export const useForm = <K extends keyof Form>(
   // password: ["confirmPassword"],
   // },
   const [form, setForm] = useState<Form>(initialValue);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
     setForm(initialValue);
@@ -26,7 +31,7 @@ export const useForm = <K extends keyof Form>(
   }, [JSON.stringify(initialValue)]);
 
   const formRef = useRef<HTMLFormElement>(null);
-  const register = (name: string) => {
+  const register = (name: MyKeys) => {
     return {
       error: errors?.[name] || "",
       value: form?.[name] || "",
