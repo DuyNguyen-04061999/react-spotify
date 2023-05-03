@@ -14,6 +14,6 @@ export * from "./classNames";
 export * from "./blockInValidChar";
 export * from "./clearWaitingQueue";
 export * from "./handleToastMessage";
-
+export * from "./validate";
 
 export * from "./storageCache";

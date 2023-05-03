@@ -4,7 +4,7 @@ import {
   sessionStorageCache,
 } from "@/utils";
 import { CanceledError } from "axios";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useMemo, useReducer, useRef } from "react";
 import { delayDuration } from "@/utils";
 
 const enum Types {
@@ -44,7 +44,7 @@ type QueryReducer<Data> = (
   action: ActionType<Data>
 ) => StateType<Data>;
 
-const queryReducer = <Data,>(
+const queryReducer = <Data>(
   state: StateType<Data>,
   { type, payload }: ActionType<Data>
 ) => {
@@ -76,7 +76,13 @@ const cache = {
 const _asyncFunction: { [key: string]: Promise<any> | any } = {};
 
 type UseQueryType<Data> = {
-  queryFn: ({signal, params}: {signal?: AbortSignal, params?: any[]}) => Promise<Data>;
+  queryFn: ({
+    signal,
+    params,
+  }: {
+    signal?: AbortSignal;
+    params?: any[];
+  }) => Promise<Data>;
   queryKey: string | string[];
   cacheTime: number;
   dependencyList: any[];
@@ -89,7 +95,7 @@ type UseQueryType<Data> = {
   keepStorage: boolean;
 };
 
-const useQuery = <Data,>({
+const useQuery = <Data>({
   queryFn,
   queryKey,
   cacheTime,
@@ -178,12 +184,13 @@ const useQuery = <Data,>({
       }
     }
   };
+  const enabledArr: any[] = useMemo(() => [enabled], [enabled]);
   useEffect(() => {
     if (enabled) {
       fetchData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, queryKey, dependencyList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, enabledArr.concat(queryKey, dependencyList));
 
   const fetchData = async (...params: any[]) => {
     //hủy api cũ khi chưa call xong
@@ -197,7 +204,6 @@ const useQuery = <Data,>({
       let res;
 
       res = getCacheDataOrPreviousData();
-// const a = controllerRef.current.signal
       if (!res) {
         // call api
         res = queryFn({ signal: controllerRef.current.signal, params });
