@@ -2,11 +2,11 @@ import { toast } from "react-toastify";
 import { clearWaititngQueue } from "./clearWaitingQueue";
 import { ReactNode } from "react";
 
-interface PropsType {
-  promise: Promise<unknown>;
+interface PropsType<Data> {
+  promise: Promise<Data>;
   pending: string | ReactNode;
   success: string | ReactNode;
-  error: string;
+  error: string | ReactNode;
 }
 interface MyError {
   data?: {
@@ -17,12 +17,12 @@ interface MyError {
     };
   };
 }
-export const handleToastMessage = ({
+export const handleToastMessage = <Data,>({
   promise,
   pending,
   success,
   error,
-}: PropsType) => {
+}: PropsType<Data>) => {
   toast.dismiss();
   clearWaititngQueue();
   return toast.promise(promise, {
